@@ -1,84 +1,100 @@
 
-
 # ProjectPulse
 
-**Engineering intelligence platform for analyzing software projects through dependency health, Git activity, CI hygiene, testing posture, repository risk detection, and overall engineering health scoring.**
+**Engineering Intelligence Platform for Repository Health Analysis**
 
-ProjectPulse is a full-stack codebase analysis platform built to provide fast, read-only engineering intelligence across software repositories.
+ProjectPulse is a full-stack engineering analysis platform that inspects software repositories and surfaces actionable health signals across architecture, dependencies, testing, CI posture, Git activity, repository hygiene, and engineering risk.
 
-It scans selected workspaces and evaluates engineering quality signals including dependency freshness, Git activity, CI workflows, test maturity, `.gitignore` hygiene, and architectural risk indicators.
+Built as a production-style portfolio project to demonstrate backend engineering, frontend product design, systems thinking, and static code intelligence.
 
-Designed as both a practical developer tool and a production-style portfolio project.
+![ProjectPulse Dashboard](assets/screenshots/dashboard-overview.png)
 
 ---
 
-## Why I Built This
+## What It Does
 
-Engineering teams often lack quick visibility into repository health without manually inspecting every project.
-
-ProjectPulse was built to answer questions like:
+ProjectPulse performs **read-only engineering analysis** against selected software projects and answers questions like:
 
 - Is this project actively maintained?
-- Are dependencies outdated?
+- Are dependencies healthy or outdated?
 - Does CI exist?
-- Are tests actually present?
+- Are automated tests actually present?
 - Is repository hygiene acceptable?
-- Are risky engineering patterns visible immediately?
+- Are there obvious engineering risks?
+- Is this codebase likely healthy, neglected, or risky?
 
-The goal was to build a practical engineering intelligence dashboard—not another CRUD tutorial.
+Instead of manually inspecting repositories one by one, ProjectPulse provides a fast engineering intelligence dashboard.
 
 ---
 
-## Features
+## Core Features
 
-### Workspace Discovery & Scoped Analysis
-- Discover available workspaces under a root directory
-- Select only projects you care about
-- Avoid wasting compute on irrelevant repositories
+## Workspace Discovery & Selective Analysis
 
-### Engineering Health Scoring
-Deterministic health scoring with tiered assessment:
+Analyze only the repositories you care about.
 
-- EXCELLENT
-- GOOD
-- FAIR
-- AT_RISK
-- CRITICAL
+ProjectPulse discovers immediate workspaces under a root directory and lets you selectively choose targets before analysis.
 
-Scoring incorporates:
+Benefits:
+
+- avoids wasting compute
+- reduces scan noise
+- improves UX
+- supports large project directories
+
+![Workspace Selection](assets/screenshots/workspace-selection.png)
+
+---
+
+## Engineering Health Scoring
+
+Deterministic health scoring with engineering posture tiers:
+
+| Score Tier | Meaning |
+|---------|---------|
+| EXCELLENT | Strong engineering posture |
+| GOOD | Healthy with minor improvements |
+| FAIR | Moderate engineering debt |
+| AT_RISK | Significant engineering concerns |
+| CRITICAL | Serious technical risk |
+
+Scoring considers:
 
 - strengths
 - improvements
 - risk findings
 - dependency health
-- Git activity
-- CI posture
 - test maturity
+- CI posture
+- Git activity
 - repository hygiene
 
 ---
 
-### Dependency Intelligence
-Analyzes dependency manifests for:
+## Dependency Intelligence
 
-**Java / Spring**
+Analyzes dependency manifests and version posture.
+
+Supported ecosystems:
+
+### Java / Spring
 - Maven
 - Spring Boot
-- Java version
-- managed dependencies
+- Java runtime detection
+- managed dependency awareness (BOM/POM)
 
-**Node / Frontend**
-- npm / package.json
+### Frontend / Node
+- npm
 - React
 - TypeScript
 - Vite
-- test frameworks
+- frontend dependency analysis
 
-**Python**
+### Python
 - requirements.txt
-- pytest ecosystem detection
+- pytest ecosystem awareness
 
-Dependency health states:
+Dependency health classifications:
 
 - CURRENT
 - UPGRADE_CANDIDATE
@@ -87,18 +103,21 @@ Dependency health states:
 - UNKNOWN
 - MANAGED
 
+![Deep Analysis](assets/screenshots/workspace-deep-analysis.png)
+
 ---
 
-### Git Intelligence
-Detects:
+## Git Intelligence
 
-- Git repository presence
-- current branch
-- detached HEAD
-- remote configuration
+Repository-level engineering visibility:
+
+- Git repository detection
+- active branch
+- detached HEAD detection
+- remote repository presence
 - branch count
 - commit recency
-- repository activity posture
+- activity classification
 
 Activity states:
 
@@ -109,128 +128,168 @@ Activity states:
 
 ---
 
-### CI Workflow Intelligence
-Inspects GitHub Actions workflows:
+## CI Workflow Intelligence
 
-- workflow count
-- push triggers
+Static analysis of GitHub Actions workflows.
+
+Detects:
+
+- workflow presence
 - pull request validation
-- manual dispatch support
+- push triggers
+- manual workflow dispatch
 - build jobs
 - test jobs
 - deploy jobs
-- detected toolchains
+- toolchain signals
 
-Risk detection:
+Risk detection includes:
 
-- deployment workflows without manual gating
+- deploy workflows without manual gating
+- CI present without tests
+- missing CI for production-style repositories
 
 ---
 
-### Test Intelligence
-Detects actual testing maturity instead of simple folder presence.
+## Test Intelligence
 
-Supports:
+ProjectPulse detects **real test maturity**, not just whether a folder exists.
 
-**Java**
+Supported frameworks:
+
+### Java
 - JUnit
 - SpringBootTest
 - Mockito
 - integration test detection
 
-**Node**
+### JavaScript / TypeScript
 - Jest
 - Vitest
-- Testing Library
+- React Testing Library
 - Cypress
 - Playwright
 
-**Python**
+### Python
 - pytest
 - unittest
 
-**C++**
+### C++
 - GoogleTest
 - Catch2
 - doctest
 
-Signals:
+Signals include:
 
 - test file count
-- integration test count
 - framework detection
-- Node test script detection
+- integration tests
+- test script presence
 
 ---
 
-### Repository Hygiene Intelligence
-Analyzes `.gitignore` coverage:
+## Repository Hygiene Intelligence
 
-Detects missing exclusions for:
+Evaluates `.gitignore` quality and repository cleanliness.
+
+Detects missing exclusions such as:
 
 - build artifacts
 - dependency directories
+- IDE junk
 - virtual environments
 - environment secrets
-- common IDE junk
+- compiled binaries
 
-Risk examples:
+Examples:
 
-- `.env` not excluded
-- `node_modules` not excluded
-- compiled binaries committed
-
----
-
-### Unknown / Ad Hoc Project Support
-Even loosely structured projects are analyzed.
-
-Example:
-
-- ad hoc C++ folders
-- source-only utility projects
-- generic workspaces without manifests
-
-Selected workspaces never silently disappear.
+- `.env` not ignored
+- `node_modules` committed risk
+- compiled executable artifacts present
 
 ---
 
-### Reporting
-Export analysis results as:
+## Risk Detection
+
+ProjectPulse surfaces actionable engineering concerns.
+
+Examples:
+
+- missing CI workflows
+- missing environment example files
+- application config exposure
+- Docker orchestration gaps
+- compiled binary artifacts
+- weak repository hygiene
+- lack of tests
+
+![Risk Analysis](assets/screenshots/risk-analysis.png)
+
+---
+
+## Ad Hoc / Unknown Project Support
+
+Not every project has a clean manifest.
+
+ProjectPulse handles:
+
+- loose C++ folders
+- source-only utilities
+- experimental projects
+- ad hoc engineering workspaces
+
+Selected workspaces never silently disappear just because detection heuristics fail.
+
+---
+
+## Reporting
+
+Export scan results as:
 
 - JSON
 - Markdown
+
+Useful for:
+
+- engineering reviews
+- repository audits
+- technical documentation
+- architecture discussions
 
 ---
 
 ## Architecture
 
-### Backend
-**Spring Boot / Java 21**
+## Backend
+
+**Java 21 + Spring Boot**
 
 Responsibilities:
 
 - workspace discovery
-- project analysis
+- repository scanning
 - scoring engine
 - dependency parsing
-- Git inspection
-- CI workflow inspection
+- Git analysis
+- CI workflow parsing
 - test intelligence
+- repository hygiene analysis
 - report generation
 
 ---
 
-### Frontend
-**React + TypeScript + Vite + Tailwind**
+## Frontend
+
+**React + TypeScript + Vite + Tailwind CSS**
 
 Responsibilities:
 
-- workspace selection
+- workspace discovery UX
+- selective analysis workflow
 - filtering
 - dashboard presentation
+- engineering signal visualization
 - report export
-- engineering intelligence visualization
 
 ---
 
@@ -250,23 +309,10 @@ Responsibilities:
 
 ---
 
-## Screenshots
-
-_Add dashboard screenshots here._
-
-Suggested:
-
-- workspace discovery
-- filtered dashboard
-- dependency intelligence
-- CI analysis
-- markdown report export
-
----
-
 ## Quick Start
 
 ### Backend
+
 ```bash
 cd backend
 mvn spring-boot:run
@@ -280,7 +326,7 @@ npm install
 npm run dev
 ```
 
-Frontend:
+Open:
 
 ```text
 http://localhost:5173
@@ -288,17 +334,16 @@ http://localhost:5173
 
 ---
 
-## Current Capabilities
+## Design Principles
 
-✅ Dependency intelligence
-✅ Git intelligence
-✅ CI workflow intelligence
-✅ Test intelligence
-✅ `.gitignore` hygiene analysis
-✅ Health scoring
-✅ Scoped workspace analysis
-✅ JSON / Markdown reporting
-✅ Unknown workspace fallback support
+ProjectPulse intentionally follows strict constraints:
+
+* Read-only analysis
+* No modification of scanned repositories
+* No build execution against scanned projects
+* No test execution against scanned projects
+* Deterministic scoring
+* Fast engineering feedback
 
 ---
 
@@ -308,9 +353,9 @@ Planned enhancements:
 
 * historical scan comparisons
 * architecture smell detection
-* Docker/container intelligence
-* dependency vulnerability intelligence
-* richer repository heuristics
+* Docker intelligence
+* dependency vulnerability analysis
+* richer heuristics
 * AI-assisted engineering recommendations
 
 See:
@@ -321,15 +366,19 @@ ROADMAP.md
 
 ---
 
-## Design Principles
+## Why This Project Matters
 
-ProjectPulse intentionally follows strict rules:
+This project demonstrates:
 
-* **Read-only analysis**
-* **No modification of scanned repositories**
-* **No build/test execution against scanned projects**
-* **Deterministic scoring**
-* **Fast developer feedback**
+* backend engineering
+* API design
+* static analysis heuristics
+* systems thinking
+* scoring engine design
+* frontend product UX
+* engineering tooling design
+
+This is intentionally **not another CRUD portfolio app**.
 
 ---
 
@@ -337,9 +386,8 @@ ProjectPulse intentionally follows strict rules:
 
 **Gregory Luna**
 
-Built as a production-style engineering portfolio project.
+Built as a serious engineering portfolio project.
 
 ```
-
 
 
