@@ -1,0 +1,20 @@
+services:
+  projectpulse-backend:
+    build:
+      context: ./backend
+    container_name: projectpulse-backend
+    expose:
+      - "8080"
+    volumes:
+      - /opt/apps:/workspace:ro
+    restart: unless-stopped
+
+  projectpulse-frontend:
+    build:
+      context: ./frontend
+    container_name: projectpulse-frontend
+    expose:
+      - "80"
+    depends_on:
+      - projectpulse-backend
+    restart: unless-stopped

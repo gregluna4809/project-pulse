@@ -18,7 +18,7 @@ type AppState =
   | { phase: 'results'; data: ScanResponse; rootPath: string; includePaths: string[] }
   | { phase: 'error'; message: string };
 
-const DEFAULT_PATH = 'C:\\Users\\gvl71\\OneDrive\\Desktop\\Projects';
+const DEFAULT_PATH = '/workspace';
 const selectionStorageKey = (rootPath: string) => `projectpulse:selectedWorkspaces:${rootPath.trim().toLowerCase()}`;
 
 function matchesSearch(ws: ProjectWorkspace, query: string): boolean {
