@@ -13,6 +13,47 @@ type ExportState =
   | { tag: 'done'; path: string; format: string }
   | { tag: 'error'; message: string };
 
+function reportFilename(reportPath: string): string | null {
+  const filename = reportPath.split(/[\\/]/).filter(Boolean).pop();
+  if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+    return null;
+  }
+  return filename;
+}
+
+function reportDownloadUrl(reportPath: string): string | null {
+  const filename = reportFilename(reportPath);
+  return filename ? `/api/reports/${encodeURIComponent(filename)}` : null;
+}
+
+function reportPublicUrl(reportPath: string, inline = false): string | null {
+  const downloadUrl = reportDownloadUrl(reportPath);
+  if (!downloadUrl) {
+    return null;
+  }
+
+  const url = new URL(downloadUrl, window.location.origin);
+  if (inline) {
+    url.searchParams.set('inline', 'true');
+  }
+  return url.toString();
+}
+
+function downloadReport(reportPath: string) {
+  const filename = reportFilename(reportPath);
+  const url = reportDownloadUrl(reportPath);
+  if (!filename || !url) {
+    throw new Error('Backend returned an invalid report path.');
+  }
+
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
 export const ExportPanel: React.FC<ExportPanelProps> = ({
   rootPath,
   includePaths,
@@ -30,6 +71,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
         format === 'JSON'
           ? await onExportJson(rootPath, includePaths)
           : await onExportMarkdown(rootPath, includePaths);
+      downloadReport(path);
       setState({ tag: 'done', path, format });
     } catch (err: unknown) {
       const message =
@@ -40,12 +82,32 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
 
   const handleCopyPath = async () => {
     if (state.tag !== 'done') return;
+    const publicUrl = reportPublicUrl(state.path);
+    if (!publicUrl) {
+      setState({ tag: 'error', message: 'Backend returned an invalid report path.' });
+      return;
+    }
+
     try {
-      await navigator.clipboard.writeText(state.path);
+      await navigator.clipboard.writeText(publicUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard API unavailable in some contexts
+    }
+  };
+
+  const handleOpenReport = () => {
+    if (state.tag !== 'done') return;
+    const url = reportPublicUrl(state.path, true);
+    if (!url) {
+      setState({ tag: 'error', message: 'Backend returned an invalid report path.' });
+      return;
+    }
+
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    if (!opened) {
+      window.location.assign(url);
     }
   };
 
@@ -89,7 +151,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
 
       {state.tag === 'done' && (
         <div className="mt-2 flex items-start gap-2 p-2.5 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <span className="text-emerald-500 text-sm flex-shrink-0 mt-0.5">✓</span>
+          <span className="text-emerald-500 text-sm flex-shrink-0 mt-0.5">OK</span>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-semibold text-emerald-700 mb-0.5">{state.format} report saved</p>
             <p className="text-xs font-mono text-emerald-800 break-all">{state.path}</p>
@@ -99,12 +161,11 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
               onClick={handleCopyPath}
               className="px-2 py-1 text-xs font-medium text-emerald-700 hover:text-emerald-900 bg-emerald-100 hover:bg-emerald-200 rounded transition-colors"
             >
-              {copied ? '✓ Copied' : 'Copy'}
+              {copied ? 'Copied' : 'Copy'}
             </button>
             <button
-              disabled
-              title="Browsers cannot open local folders directly. Copy the path and paste it into Windows Explorer."
-              className="px-2 py-1 text-xs font-medium text-gray-400 bg-gray-100 rounded cursor-not-allowed"
+              onClick={handleOpenReport}
+              className="px-2 py-1 text-xs font-medium text-emerald-700 hover:text-emerald-900 bg-emerald-100 hover:bg-emerald-200 rounded transition-colors"
             >
               Open
             </button>
