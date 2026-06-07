@@ -7,6 +7,8 @@ ProjectPulse is a full-stack engineering analysis platform that inspects softwar
 
 Built as a production-style portfolio project to demonstrate backend engineering, frontend product design, systems thinking, and static code intelligence.
 
+**Live Demo:** https://projectpulse.pulse-forge.com
+
 ![ProjectPulse Dashboard](assets/screenshots/dashboard-overview.png)
 
 ---
@@ -331,6 +333,10 @@ Open:
 ```text
 http://localhost:5173
 ```
+
+**Windows convenience:** `start-dev.ps1` launches both the backend and frontend dev servers in separate windows.
+
+**Production deployment:** The repository also includes `docker-compose.yml` for the deployed instance. It is shaped for the production server, runs behind a Caddy reverse proxy serving HTTPS, mounts a server-specific `/opt/apps` path, and does not publish host ports. Treat it as the deployment configuration, not a portable local-run method.
 
 ---
 
